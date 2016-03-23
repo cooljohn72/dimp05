@@ -1,0 +1,283 @@
+@CHARSET "UTF-8";
+@import url( "http://fonts.googleapis.com/earlyaccess/notosanskr.css" );
+
+/* dimp color: #639493 */
+
+html , body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, bolckquote, pre, a, abbr, acronym, 
+address, big, cite, code, del, dfn, em, font, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, 
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td{
+	font-family: 'Noto Sans KR', Noto Serif, serif;
+}
+body{
+	padding-top: 80px;	
+	background-color: #f9f9f9;
+}
+
+/* 페이지 상단 네비게이션 wrapper */
+#naveWrapper{
+	border-top:3px solid gray;
+	border-bottom:1px solid silver;	
+}
+
+#serchInputText{
+	/* 
+	border: 1px solid red;
+	 */
+}
+
+.dimp-border-color{	
+	border: 1px solid #639493;
+}
+
+.container-fluid {
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+
+/* black background */
+.bg-4 { 
+    background-color: #2f2f2f;
+    color: #ffffff;
+}
+
+.bg-white{
+	background-color: #ffffff;
+    color: #639493;
+}
+.bg-gray{
+	color:#f1f1f1;
+	background-color:#999999;
+}
+
+.bg-white ul li {
+	background-color: #ffffff;
+    color: #999999;
+}
+
+.bg-dimp{
+	background-color: #639493;
+    color: #ffffff;
+}
+
+.border-silver{
+	border: 1px solid silver;
+}
+.font-gray{
+	color: gray;
+}
+.font-dimp{
+	color: #639493;
+}
+
+.dimp-logo{
+	font-size:24px;
+	font-weight: bold;
+	/* border: 1px solid; */
+    border-radius: 4px;
+    letter-spacing: 2px;
+}
+
+
+.btn-primary{
+	background-color: #639493;
+	color: #ffffff;
+	border: 1px solid #ffffff;
+}
+
+.btn-primary:hover{
+	background-color: #ffffff;
+	color: #639493;
+	border: 1px solid #639493;
+}
+
+.btn-default{
+	background-color: #ffffff;
+	color: #639493;
+	border: 1px solid #639493;
+}
+.btn-default:hover{
+	background-color: #639493;
+	color: #ffffff;
+	border: 1px solid #639493;
+}
+
+#btn_dimpIt{
+	margin-top:10px;
+}
+
+footer{
+	border-top: 2px solid #639493;
+	font-size: 12px;
+}
+.secondFooter{
+	border-top: 2px solid #ffffff;
+}
+
+#footer-container{
+	padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+
+.navbar {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    /* 
+    letter-spacing: 5px;
+     */
+}
+
+.navbar-nav li a:hover {
+    color: #1abc9c !important;
+}
+
+.navbar, #nav, #myNavbar{
+	/* height:10px; */
+	
+}
+
+#spacer{
+	/* 
+	height:1000px;	
+	*/
+	/* 	
+	border: 1px solid gray;
+	 */		
+}
+
+#mainContent{
+	/* 
+	height:1000px;
+	 */
+	 
+	/* for layout test */
+	/* 
+	border: 1px solid silver;
+	 */		
+	width:1024px;
+	border: 1px solid gray;
+	z-index:0;
+}
+
+#left-sidebar{
+	/* for layout test */
+	/* 
+	border: 1px solid red;	
+	height:1000px; 
+	*/
+	 
+}
+#right-sidebar{
+	 /* for layout test */
+	/* 
+	border: 1px solid red;	
+	height:1000px; 
+	*/
+}
+
+.right-tabs .nav {
+    float: right;
+    border-bottom: 0px;
+}
+
+.right-tabs .nav li { float: left }
+
+.right-tabs .tab-content {
+    float: left;
+    border-top: 1px solid #ddd;
+    margin-top: -1px;
+}
+
+#footerSection ul
+{
+margin: 0;
+padding: 0;
+list-style-type: none;
+overflow: hidden;
+}
+
+#footerSection ul li { display: inline; }
+
+#footerSection ul li a
+{
+text-decoration: none;
+padding: .2em 1em;
+}
+
+.horizontal_ul_li{
+	display: inline;
+	padding: 1px;
+	list-style:none;
+	list-style-position:inside;	
+	float:left;	    
+}
+
+.ul-noBullet{
+	padding: 4px;
+	list-style-type: none;
+}
+
+/* 
+preventing text overflow in sidebar>ul
+ */
+.ul-sidebar li{
+	text-decoration: none; 
+    text-overflow: ellipsis; 
+    display: block; 
+    overflow: hidden; 
+    white-space: nowrap;
+    width: 80px;
+}
+
+.profileElementBlock{
+	border-bottom: 1px solid silver;	
+}
+
+.profileElementBlock div{
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.profileElementHeader{
+	
+}
+
+._test{
+	border: 1px solid red;	
+}
+
+.errorField{
+	border-color: rgba(229, 103, 23, 0.8);
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(229, 103, 23, 0.6);
+    outline: 0 none;
+}
+
+/* 1 border div or box*/
+.right-border-silver{
+	border-right: 1px solid silver
+}
+.left-border-silver{
+	border-right: 1px solid silver
+}
+/* /. 1 border div or box */
+
+.gray-anchor{
+	color:#999999;
+}
+.gray-anchor:hover{
+	color:#999999;
+}
+.gray-anchor:visited{
+	color:#999999;
+}
+
+.border-radius(@radius){
+    .border-top-radius(@radius);
+    .border-right-radius(@radius);
+    .border-bottom-radius(@radius);
+    .border-left-radius(@radius);
+}

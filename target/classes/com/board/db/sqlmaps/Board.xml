@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ -->
+<!DOCTYPE sqlMap 
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ 
+ 
+<!--   myBatis
+<mapper namespace="Board">
+  <select id="getArticleList" resultType="board">
+    select * from Board order by idx desc	
+  </select>
+</mapper>
+ -->
+
+<sqlMap namespace="Board">
+	<typeAlias alias="str" type="java.lang.String" />	 
+	<typeAlias alias="int" type="java.lang.Integer" />	 
+	<typeAlias alias="board" type="com.board.beans.Board" />
+	
+	
+	<select id="getArticleList" resultClass="board">
+		select * from Board order by idx desc	
+	</select>
+	
+	<delete id="deleteArticle"  parameterClass ="str" >
+		delete from board where idx = #idx#
+	</delete>
+	
+	<select id="retrieveArticle" parameterClass="int" resultClass="board">
+		select * from board where idx = #idx#	
+	</select>
+	
+	<insert id="createArticle"  parameterClass ="board" >
+		INSERT INTO BOARD  
+                (TITLE, WRITER, REGDATE, COUNT, CONTENT, REGIP, FILENAME) 
+                VALUES (#title#, #writer#, #regdate#, #count#, #content#, #regip#, #filename#)
+	</insert>
+	
+	<update id="setArticleCount" parameterClass="board">
+		update board set count = #count# where idx =#idx#
+	</update>
+	
+    
+    <insert id="createUser" parameterClass="user">
+    	INSERT INTO USER(eMail, password, createdTime) 
+    		values(#eMail#, #password#, #createdTime#)
+    </insert>
+	 
+	
+</sqlMap>

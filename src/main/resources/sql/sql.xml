@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="sql">
+	<typeAlias alias="str" type="java.lang.String" />	 
+	<typeAlias alias="int" type="java.lang.Integer" />	
+	<typeAlias alias="map" type="java.util.Map" />	
+	<typeAlias alias="board" type="com.board.beans.Board" />
+	<typeAlias alias="user" type="com.board.beans.User" />
+	<typeAlias alias="categories" type="com.board.beans.Categories" />
+	<typeAlias alias="stageCategories" type="com.board.beans.StageCategories" />
+	<typeAlias alias="outputs" type="com.board.beans.Outputs" />
+	<typeAlias alias="comment" type="com.board.beans.Comment" />
+	<typeAlias alias="contact" type="com.board.beans.Contact" />
+	<typeAlias alias="school" type="com.board.beans.AcademicBackground" />
+	<typeAlias alias="career" type="com.board.beans.Career" />
+	<typeAlias alias="applicant" type="com.board.beans.Applicant" />
+	<typeAlias alias="application" type="com.board.beans.Application" />
+	<typeAlias alias="article" type="com.board.beans.ArticleForList" />
+	<!-- 
+	<parameterMap class="article" id="article.Bean">
+		<paramter property="postType"/>
+	</parameterMap>	
+	 -->
+	<!--db접속 테스트 -->
+	<select id="showtable" resultClass="str">
+	     SHOW TABLES
+    </select>
+    
+    <insert id="createUser" parameterClass="user">
+    	INSERT INTO TBUSER(eMail, password, createdTime, userType) 
+    		values(#eMail#, #password#, #createdTime#, #userType#)
+    	<selectKey resultClass="int">
+			select LAST_INSERT_ID()		
+		</selectKey>
+    </insert>
+    
+    <select id="getCategories" resultClass="categories">
+    	SELECT idx, categoryName, code FROM tbCategory order by categoryName
+    </select>
+    
+    <select id="getStageCategories" resultClass="stageCategories">
+    	SELECT idx, categoryName, code FROM tbStageCategory order by idx
+    </select>
+    
+    <select id="getOutputs" resultClass="Outputs">
+    	SELECT idx, description, code FROM tbOutputs order by seq
+    </select>
+    
+    <insert id="createPostDraft" parameterClass="board">
+    	INSERT INTO tbBoard(
+    		title, postType, writerIdx,
+    		regdate, count, content, regip, filename, isDeleted, 
+    		deletedDate, deleteUserIdx, ownerType, expectingDays, expectingCost,
+    		qualification, emailNotice, postStatus, postDate
+    	) VALUES(
+    		#title#, #postType#, #writerIdx#, 
+			#regdate#, #count#, #content#, #regip#, #filename#, #isDeleted#,
+    		#deletedDate#, #deleteUserIdx#, #ownerType#, #expectingDays#, #expectingCost#,
+    		#qualification#, #emailNotice#, #postStatus#, #postDate#
+    		)
+    	<selectKey resultClass="int">
+			select LAST_INSERT_ID()		
+		</selectKey>
+    </insert>
+    
+    <delete id="deleteExistingCategories" parameterClass="int">
+    	delete from tbBoardCategories where relatedPostIdx=$idx$    
+    </delete>
+    <insert id="insertCategories" parameterClass="map">
+    	insert into tbBoardCategories (relatedPostIdx, code)
+    		values (#idx#, #code#)    	    		    	
+    </insert>
+    
+    <delete id="deleteExistingStageCategories" parameterClass="int">
+    	delete from tbBoardStageCategories where relatedPostIdx=$idx$    
+    </delete>
+    <insert id="insertStageCategories" parameterClass="map">
+    	insert into tbBoardStageCategories (relatedPostIdx, code)
+    		values (#idx#, #code#)    	    		    	
+    </insert>
+    
+    <delete id="deleteExistingRequiredOutputs" parameterClass="int">
+    	delete from tbBoardOutputs where relatedPostIdx=#idx#
+    </delete>
+    <insert id="insertRequiredOutputs" parameterClass="map">
+    	insert into tbBoardOutputs (relatedPostIdx, code) 
+    		values (#idx#, #code#)
+    </insert>
+    
+    <select id="getUserId" parameterClass="map" resultClass='user'>
+    	select idx, nickName, eMail from tbUser where eMail=#id# and password=#pw# and activatedTime is not null limit 1    
+    </select>
+    <select id="getUser" parameterClass="int" resultClass="user">
+		select * from tbUser where idx=#uid#    
+    </select>
+     
+    <update id='updateUserProfile' parameterClass="user">
+    	update tbUser set
+    		nickName	= #nickName#,
+    		legalName	= #legalName#,
+    		address1 	= #address1#,
+    		address2 	= #address2#,
+    		birthYearMonth = #birthYearMonth#,
+    		gender		= #gender#,
+    		additionalCareer = #additionalCareer#,
+    		selfIntro = #selfIntro#
+    	where idx=#idx#
+    </update>
+    <insert id="loggingSignIn" parameterClass="int">
+    	insert into tbLoginHistory(userIdx, loginTime) values(#idx#, NOW())
+    </insert>
+    
+    <select id="getPost" parameterClass="int" resultClass='board'>
+    	select *, fnGetSelectedCategories(#idx#) as categories from tbBoard where idx=#idx#
+    </select>
+    
+ 	<select id="getPostCategories" parameterClass="int" resultClass="str">
+ 		select c.categoryName
+		from tbBoardCategories as b
+		left outer join tbCategory as c
+			on B.CODE=c.code
+		where b.relatedPostIdx=#idx#;
+ 	</select>
+ 	
+ 	<select id="getPostStageCategories" parameterClass="int" resultClass="str">
+ 		select c.categoryName
+		from tbBoardStageCategories as b
+		left outer join tbStageCategory as c
+			on B.CODE=c.code
+		where b.relatedPostIdx=#idx#;
+ 	</select>
+ 	
+ 	<select id='getPostRequiredOutputs' parameterClass="int" resultClass="str">
+ 		select
+		c.description
+		from tbBoardOutputs as b
+		left outer join tbOutputs as c
+			on B.CODE=c.code
+		where b.relatedPostIdx=#idx#;
+ 	</select>
+ 	
+ 	<insert id="addComment" parameterClass="comment">
+ 		insert into tbBoardComment (writerIdx, content, regDate, parentCommentId, parentPostId, isChildComment, seq)
+ 			values(#writerIdx#, #content#, #regDate#, #parentCommentId#, #parentPostId#, #isChildComment#, fnGetMaxSEQ_comment(#parentPostId#)+1)
+ 	</insert>
+ 	
+ 	<insert id="addReplyComment" parameterClass="comment">
+ 		insert into tbBoardComment (writerIdx, content, regDate, parentCommentId, parentPostId, isChildComment, seq)
+ 			values(#writerIdx#, #content#, #regDate#, #parentCommentId#, #parentPostId#, #isChildComment#, fnGetSEQ_parentComment(#parentCommentId#))
+ 	</insert>
+ 	
+ 	<update id="removeComment" parameterClass="int">
+ 		update tbBoardComment set isDeleted=1, deletedTime = now() where idx=#commentIdx#
+ 	</update>
+ 	<select id="getCommentList" parameterClass="int" resultClass="comment">
+ 		select 
+			c.*, u.NickName as writer 
+		from tbBoardComment as c
+		left outer join tbUser as u
+			on c.writerIdx = u.idx
+		where c.isDeleted='0' and c.parentPostId=#idx# 
+			order by seq desc, isChildComment, regDate desc 
+ 	</select>
+ 	<insert id="createNewContact" parameterClass="contact">
+ 		insert into tbUserContactNumbers(userIdx, isMain, contactNumber) 
+ 			values(#userIdx#, #isMain#, #contactNumber#)
+ 	</insert>
+ 	<delete id='deleteContact' parameterClass='int'>
+ 		delete from tbUserContactNumbers where idx=#contactIdx#
+ 	</delete>
+ 	<update id='initiateMainContact' parameterClass='int'>
+ 		update tbUserContactNumbers set isMain='0'
+ 			where userIdx=#userIdx#
+ 	</update>
+ 	<select id='getContactNumberList' parameterClass='int' resultClass='contact'>
+ 		select * 
+ 		from tbUserContactNumbers 
+ 		where userIdx=#userIdx#
+ 			order by isMain desc
+ 	</select>
+ 	<insert id='createNewSchool' parameterClass="school">
+ 		INSERT INTO `DIMP`.`tbUserAcademicBackground`(
+			`userIdx`,`isMain`,`schoolName`,`degree`,`startYear`,`startMonth`,`endYear`,`endMonth`)
+		VALUES(
+			#userIdx#,#isMain#,#schoolName#,#degree#,#startYear#,#startMonth#,#endYear#,#endMonth#)
+ 	</insert>
+ 	<select id='getSchoolList' parameterClass='int' resultClass='school'>
+ 		select * 
+ 		from tbUserAcademicBackground 
+ 		where userIdx=#userIdx#
+ 			order by isMain desc
+ 	</select> 	
+ 	<update id="initializeMainSchool" parameterClass="int">
+ 		update tbUserAcademicBackground set isMain='0'
+ 			where userIdx=#userIdx#
+ 	</update>
+ 	<!-- career -->
+ 	<update id="initializeMainCareer" parameterClass="int">
+ 		update tbUserCareer set isMain='0'
+ 			where userIdx=#userIdx#
+ 	</update>
+ 	<insert id='createNewCareer' parameterClass="career">
+ 		INSERT INTO `DIMP`.`tbUserCareer`
+			(`idx`,`userIdx`,`isMain`,`orgName`,`role`,`startYear`,`startMonth`,`endYear`,`endMonth`)
+		VALUES
+		(#idx#,#userIdx#,#isMain#,#orgName#,#role#,#startYear#,#startMonth#,#endYear#,#endMonth#)
+ 	</insert>
+ 	<select id='getCareerList' parameterClass='int' resultClass='career'>
+ 		select * 
+ 		from tbUserCareer 
+ 		where userIdx=#userIdx#
+ 			order by isMain desc
+ 	</select>
+ 	<!-- /. career -->
+ 	
+ 	<select id='getApplicant' parameterClass='int' resultClass='applicant'>
+ 	select 
+		*,
+		(select schoolName 
+		    from tbUserAcademicBackground 
+		    where userIdx=#applicantIdx#
+		    order by isMain desc, startyear desc, startMonth 
+		    desc LIMIT 1) 
+	    as displaySchool,
+	    (select degree 
+		    from tbUserAcademicBackground 
+		    where userIdx=#applicantIdx#
+		    order by isMain desc, startyear desc, startMonth 
+		    desc LIMIT 1) 
+		as displayDegree,
+	    (select orgName
+		    from tbUserCareer
+		    where userIdx=#applicantIdx#
+		    order by isMain desc, startyear desc, startMonth 
+		    desc LIMIT 1) 
+	    as displayOrgName,
+	    (select role
+		    from tbUserCareer
+		    where userIdx=#applicantIdx# 
+		    order by isMain desc, startyear desc, startMonth 
+		    desc LIMIT 1) 
+	    as displayRole
+	from tbUser
+	where idx=#applicantIdx#
+ 	</select>
+ 	
+ 	<insert id="createApplication" parameterClass="application">
+    	INSERT INTO `DIMP`.`tbApplication`
+			(`writerIdx`,`writerAddress1`,`writerSchool`,`writerDegree`,`writerCompany`,`writerRole`,
+			`selfIntro_copied`,`writerPlan`,`expectingCost`,`expectingDays`,`postIdx`,
+			`createdDate`,`isDeleted`,`deletedDate`,`status`,lastUpdatedDate)
+		VALUES
+			(#writerIdx#,#writerAddress1#,#writerSchool#,#writerDegree#,#writerCompany#,#writerRole#,
+			#selfIntro_copied#,#writerPlan#,#expectingCost#,#expectingDays#,#postIdx#,
+			#createdDate#,#isDeleted#,#deletedDate#,#status#,#lastUpdatedDate#)
+    	<selectKey resultClass="int">
+			select LAST_INSERT_ID()		
+		</selectKey>
+    </insert>
+    
+    <select id='getApplicationListOfaPost' parameterClass='int' resultClass='application'>
+    	select 
+			a.idx, 
+			a.writerIdx,
+			a.expectingDays,
+			a.expectingCost,
+			u.nickName as writerName,
+			a.writerSchool,
+			a.writerDegree,
+			a.postIdx
+		from tbApplication as a
+			left outer join tbUser as u
+			on a.writerIdx = u.idx
+			where a.status="SUBMITTED" and a.postIdx=#idx#
+    </select>   	
+    <select id='getApplication' parameterClass='int' resultClass='application'>
+    	select 
+			a.idx, 
+			a.writerIdx,
+			a.expectingDays,
+			a.expectingCost,
+			u.nickName as writerName,
+			a.writerSchool,
+			a.writerDegree,
+			a.postIdx,
+			a.status
+		from tbApplication as a
+			left outer join tbUser as u
+			on a.writerIdx = u.idx
+		where a.idx=#idx#
+    </select>
+    <!-- 
+    <select id='getArticleList' resultClass='article' parameterClass='article.Bean'>
+     -->
+    <select id='getArticleList' resultClass='article' parameterClass='str'>
+	    select b.*
+			,u.nickName as writerName			
+			,(select count(distinct(writerIdx)) as howManyApplied 
+				from tbApplication where status='submitted' and postIdx=b.idx) as howManyApplied				
+		from tbBoard as b
+			left outer join tbUser as u
+			on b.writerIdx = u.idx
+		where postStatus='02' and isDeleted='0' and postType=#postType# 
+		<!-- 		
+		<dynamic prepend=" and ">
+			<isNotNull property="postType">
+			postType=#postType#
+			</isNotNull>
+		</dynamic>
+		 -->
+    </select>
+    
+    <select id='getHowManyUsersByEmail' parameterClass='str' resultClass='int'>
+    	select count(idx) from tbUser where email=#email#;
+    </select>
+    <select id="getUserIdByActivationCode" parameterClass="str" resultClass="int">
+    	select idx from tbUser where activationCode=#activationCode# limit 1
+    </select>
+    
+    <select id='getUserIdByEmail_Idx' parameterClass="map" resultClass="int">
+    	select count(idx) from tbUser where idx=#userIdx# and email=#userEmail#
+    </select>
+    
+    <insert id='createSecuCode' parameterClass="map">
+		INSERT INTO `DIMP`.`tbUserSecuCode`
+		(`userIdx`,`relatedAction`,`secuCode`, `createdTime`)
+		VALUES
+		(#userIdx#,#relatedAction#,#secuCode#, now())    	 
+    </insert>
+    <select id='getUserIdxBySecuCode' parameterClass='str' resultClass='int'>
+    	select ifnull(userIdx, 0) from tbUserSecuCode where secuCode=#secuCode#
+    </select>   
+    <update id="updateUserToActivated" parameterClass='int'>
+    	update tbUser set activatedTime=now() where idx=#userIdxToActivate#
+    </update>
+    <!-- 
+    <select id='getUserByIdx' parameterClass='int' resultClass='user'>
+    	select * from tbUser where idx=#uIdx#
+    </select>
+     --> 
+</sqlMap>
